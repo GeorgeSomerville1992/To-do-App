@@ -1,7 +1,15 @@
 doctype html
 html
   head
-    title= title
+    title Hello React
+    //
+       Not present in the tutorial. Just for basic styling. 
     link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src='http://fb.me/react-0.10.0.js')
+    script(src='http://fb.me/JSXTransformer-0.10.0.js')
+    script(src='http://code.jquery.com/jquery-1.11.1.min.js')
+    script(src='http://cdnjs.cloudflare.com/ajax/libs/showdown/0.3.1/showdown.min.js')
   body
-    block content
+    #content
+    h1 welcome to the best app in the world
+    script(type='text/jsx', src='/javascripts/main.js')
