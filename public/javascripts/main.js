@@ -6,33 +6,9 @@ React.renderComponent(
 );
 
 
-var newtodoList = React.createClass({
-  render: function() {
-    var todoNodes = this.props.data.map(function (todo) {
-      return (
-        <Todo description={todo.description}>
-          {todo.date}
-        </Todo>
-      );
-    });
-    // taking all of the abocve from the data and shoving ti in below
-    return (
-      <div className="todoList">
-        {todoNodes}
-      </div>
-    );
-  }
-});
 
-var NewToDoForm = React.createClass({
-  render: function() {
-    return (
-      <div className="todoForm">
-        Hello, world! I am a NewToDoForm
-      </div>
-    );
-  }
-});
+
+
 var converter = new Showdown.converter();
 var Todo = React.createClass({
   render: function() {
@@ -70,6 +46,25 @@ var TodoBox = React.createClass({
       }.bind(this)
     });
   },
+  handleToDoSubmit: function(todo) {
+    // TODO: submit to the server and refresh the list
+    // make things faster (apparently)
+    var todos = this.state.data;
+    todos.push(todo);
+    this.setState({data: newTodos});
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'POST',
+      data: todo,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   getInitialState: function() {
     return {data: []};
   },
@@ -83,12 +78,54 @@ var TodoBox = React.createClass({
       <div className="todoBox">
         <h1>Todos</h1>
         <newtodoList data={this.state.data}/> // these are variables!!!
-        <NewToDoForm  /> // so we can put classnames as actualt tags? this is weirld. 
-
+        // <NewToDoForm  /> // so we can put classnames as actualt tags? this is weirld. 
+        <NewToDoForm onTodoSubmit={this.handleToDoSubmit} />
       </div> // this is where the main list is. Were then applying to the top part
     );
   }
-})
+});
+var newtodoList = React.createClass({
+  render: function() {
+    var todoNodes = this.props.data.map(function (todo) {
+      return (
+        <Todo description={todo.description}>
+          {todo.date}
+        </Todo>
+      );
+    });
+    // taking all of the abocve from the data and shoving ti in below
+    return (
+      <div className="todoList">
+        {todoNodes}
+      </div>
+    );
+  }
+});
+var NewToDoForm = React.createClass({
+  handleSubmit: function(e) {
+      e.preventDefault();
+      var description = this.refs.description.getDOMNode().value.trim();
+      var text = this.refs.text.getDOMNode().value.trim();
+      if (!text || !description) {
+        return false;
+      }
+      // TODO: send request to the server
+      // setting values to nothing, can we not just use empty() ? 
+      this.props.onTodoSubmit({description: description, text: text});
+      this.refs.description.getDOMNode().value = '';
+      this.refs.text.getDOMNode().value = '';
+      return false;
+  },
+  render: function() { // using this.hagleSubmit => finds the same one  within this function
+    return (
+      <form className="todoForm" onSubmit={this.handleSubmit}>
+        <input type="text" placeholder="Your name" ref="description" />
+        <input type="text" placeholder="Say something..." ref="text" />
+        <input type="submit" value="Post" />
+      </form>
+    );
+  }
+});
 
 React.renderComponent(
   <TodoBox url="/javascripts/mainjson.json" pollInterval={2000} />,
