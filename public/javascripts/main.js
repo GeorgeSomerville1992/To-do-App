@@ -46,12 +46,15 @@ var TodoBox = React.createClass({
       }.bind(this)
     });
   },
-  handleToDoSubmit: function(todo) {
+    handleToDoSubmit: function(todo) {
     // TODO: submit to the server and refresh the list
-    // make things faster (apparently)
     var todos = this.state.data;
-    todos.push(todo);
+    var newTodos = todos.concat([todo]);
+    // taking that ever is inside the todo arugment above and concat it 
+    // ins ide an array
+    // we use it with this. 
     this.setState({data: newTodos});
+
     $.ajax({
       url: this.props.url,
       dataType: 'json',
@@ -65,6 +68,7 @@ var TodoBox = React.createClass({
       }.bind(this)
     });
   },
+ 
   getInitialState: function() {
     return {data: []};
   },
@@ -78,8 +82,8 @@ var TodoBox = React.createClass({
       <div className="todoBox">
         <h1>Todos</h1>
         <newtodoList data={this.state.data}/> // these are variables!!!
-        // <NewToDoForm  /> // so we can put classnames as actualt tags? this is weirld. 
-        <NewToDoForm onTodoSubmit={this.handleToDoSubmit} />
+         // so we can put classnames as actualt tags? this is weirld. 
+        <toDoForm onTodoSubmit={this.handleToDoSubmit} />
       </div> // this is where the main list is. Were then applying to the top part
     );
   }
@@ -101,7 +105,7 @@ var newtodoList = React.createClass({
     );
   }
 });
-var NewToDoForm = React.createClass({
+var toDoForm = React.createClass({
   handleSubmit: function(e) {
       e.preventDefault();
       var description = this.refs.description.getDOMNode().value.trim();
