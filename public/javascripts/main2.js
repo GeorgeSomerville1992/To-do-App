@@ -60,6 +60,7 @@ var TodoBox = React.createClass({
    
     todos.push(todo)
     console.log(todos)
+    // ajax cant find json url. when new object is added
     this.setState({data: todos}, function(){
       $.ajax({
         url: this.props.url,

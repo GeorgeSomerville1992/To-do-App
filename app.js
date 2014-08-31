@@ -60,16 +60,7 @@ app.use(function(err, req, res, next) {
     });
 });
 
-app.get('/todos.json', function(req, res) {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify(todos));
-});
 
-app.post('/todos.json', function(req, res) {
-  comments.push(req.body);
-  res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify(todos));
-});
 
 
 module.exports = app;
