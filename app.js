@@ -10,6 +10,11 @@ var users = require('./routes/users');
 
 var app = express();
 
+var todos = [
+  {"description": "rooms", "text": "This is one todo"},
+  {"description": "bathroom", "text": "This is *another* todo"}
+]
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -53,6 +58,17 @@ app.use(function(err, req, res, next) {
         message: err.message,
         error: {}
     });
+});
+
+app.get('/todos.json', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(todos));
+});
+
+app.post('/todos.json', function(req, res) {
+  comments.push(req.body);
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(todos));
 });
 
 

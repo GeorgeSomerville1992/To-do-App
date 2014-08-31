@@ -14,6 +14,11 @@ React.renderComponent(
 //   {description: "Pete Hunt", text: "This is one comment"},
 //   {description: "Jordan Walke", text: "This is *another* comment"}
 // ];
+// var todos = [
+//   {"description": "rooms", "text": "This is one todo"},
+//   {"description": "bathroom", "text": "This is *another* todo"}
+// ];
+
 var converter = new Showdown.converter();
 var Todo = React.createClass({
   render: function() {
@@ -28,27 +33,7 @@ var Todo = React.createClass({
     );
   }
 });
-//here were callsing the todo class and shoving whatever we get 
-// from the data inide the decription and the text
-// so we set it up => then redner insdie using the {todo}nodes
-var TodoList = React.createClass({
-  render: function() {
-     var todoNodes = this.props.data.map(function (todo) {
-      return (
-        <Todo description={todo.description}>
-          {todo.text}
-        </Todo>
-      );
-    });
-   return (
-      <div className="todoList">
-        {todoNodes}
-      </div>
-    );
 
-
-  }
-});
 
 
 // sets inital state executes once ins lifecycle and stes initnal state
@@ -70,21 +55,25 @@ var TodoBox = React.createClass({
   },
   handleTodoSubmit: function(todo) {
     // TODO: submit to the server and refresh the list
+   
     var todos = this.state.data;
-    var newTodos = todos.concat([todo]);
-    this.setState({data: newTodos});
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      type: 'POST',
-      data: todo,
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
+   
+    todos.push(todo)
+    console.log(todos)
+    this.setState({data: todos}, function(){
+      $.ajax({
+        url: this.props.url,
+        dataType: 'json',
+        type: 'POST',
+        data: todo,
+        success: function(data) {
+          this.setState({data: data});
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error(this.props.url, status, err.toString());
+        }.bind(this)
+      });
+    });  
   },
   getInitialState: function() {
     return {data: []};
@@ -104,6 +93,25 @@ var TodoBox = React.createClass({
         <TodoForm onTodoSubmit={this.handleTodoSubmit} />
       </div>
 
+    );
+  }
+});
+//here were callsing the todo class and shoving whatever we get 
+// from the data inide the decription and the text
+// so we set it up => then redner insdie using the {todo}nodes
+var TodoList = React.createClass({
+  render: function() {
+     var todoNodes = this.props.data.map(function (todo) {
+      return (
+        <Todo description={todo.description}>
+          {todo.text}
+        </Todo>
+      );
+    });
+   return (
+      <div className="todoList">
+        {todoNodes}
+      </div>
     );
   }
 });
