@@ -19,6 +19,8 @@ React.renderComponent(
 //   {"description": "bathroom", "text": "This is *another* todo"}
 // ];
 
+
+
 var converter = new Showdown.converter();
 var Todo = React.createClass({
   render: function() {
@@ -116,7 +118,10 @@ var TodoList = React.createClass({
     );
   }
 });
+
+
 var TodoForm = React.createClass({
+  
   // where things get a bit complex
   handleSubmit: function(e) {
     e.preventDefault();
@@ -133,16 +138,35 @@ var TodoForm = React.createClass({
     this.refs.text.getDOMNode().value = '';
     return false;
   },
+  // validateForm: function(){
+  //   console.log("hi")
+  //   var x = document.forms["todoForm"].value;
+  //   if (x == null || x == "") {
+  //       alert("First name must be filled out");
+  //       return false;
+  //   }
+  // },
+   // 
   render: function() {
     return (
-       <form className="todoForm" onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="Your todo"  ref="description" />
-        <input type="text" placeholder="your todo description" ref="text" />
+       <form className="todoForm" onSubmit = {this.handleSubmit} name="todoform" >
+        <input type="text" placeholder="todo title"  ref="description"  required={true} maxLength={15} />
+        <input type="text" placeholder="your todo description" ref="text" required={true} />
         <input type="submit" value="Post" />
       </form>
     );
   }
 });
+
+// function validateForm() {
+//     var x = document.forms["todoForm"].value;
+//     if (x == null || x == "") {
+//         alert("First name must be filled out");
+//         return false;
+//     }else{
+//       this.handleSubmit()
+//     }
+// }
 React.renderComponent(
   <TodoBox url = "/javascripts/mainjson.json" pollInterval={2000}/>,
   document.getElementById('content')
