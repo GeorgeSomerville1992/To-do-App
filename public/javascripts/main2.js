@@ -136,8 +136,8 @@ var TodoForm = React.createClass({
   render: function() {
     return (
        <form className="todoForm" onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="Your todo"  ref="description" />
-        <input type="text" placeholder="your todo description" ref="text" />
+        <input type="text" placeholder="Your todo"  ref="description" required={true} maxLength={15} />
+        <input type="text" placeholder="your todo description" ref="text" required={true} />
         <input type="submit" value="Post" />
       </form>
     );
