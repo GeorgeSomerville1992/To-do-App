@@ -158,6 +158,7 @@ var TodoForm = React.createClass({
   }
 });
 
+
 // function validateForm() {
 //     var x = document.forms["todoForm"].value;
 //     if (x == null || x == "") {
@@ -168,6 +169,9 @@ var TodoForm = React.createClass({
 //     }
 // }
 // "/javascripts/mainjson.json" 
+
+
+
 React.renderComponent(
   <TodoBox url = "todos.json" pollInterval={2000}/>,
   document.getElementById('content')
