@@ -25,7 +25,7 @@ var Todo = React.createClass({
      var rawMarkup = converter.makeHtml(this.props.children.toString());
     return (
       <div className="todo">
-        <h2 className="commentDescription">
+        <h2 className="todotDescription">
           {this.props.description}
         </h2>
         <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
@@ -33,6 +33,20 @@ var Todo = React.createClass({
     );
   }
 });
+var TodoDetailed = React.createClass({
+  render: function() {
+     var rawMarkup = converter.makeHtml(this.props.children.toString());
+    return (
+      <div className="TodoDetailed">
+        <h2 className="todotDescriptionList">
+          {this.props.Details}
+        </h2>
+        <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+      </div>
+    );
+  }
+});
+
 
 
 
@@ -90,17 +104,19 @@ var TodoBox = React.createClass({
     return (
       <div className="todoBox">
         <h1> todos </h1>
-        <TodoList data={this.state.data}/>
+        <TodoSummary data={this.state.data}/>
         <TodoForm onTodoSubmit={this.handleTodoSubmit} />
       </div>
 
     );
   }
 });
+
+
 //here were callsing the todo class and shoving whatever we get 
 // from the data inide the decription and the text
 // so we set it up => then redner insdie using the {todo}nodes
-var TodoList = React.createClass({
+var TodoSummary = React.createClass({
   render: function() {
      var todoNodes = this.props.data.map(function (todo) {
       return (
@@ -111,7 +127,7 @@ var TodoList = React.createClass({
       );
     });
    return (
-      <div className="todoList">
+      <div className="TodoSummary">
         {todoNodes}
       </div>
     );
@@ -144,9 +160,67 @@ var TodoForm = React.createClass({
     );
   }
 });
+
+
+var DetailedTodoBox = React.createClass({
+  loadtoDosDescriptionFromServer: function(){
+     $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  getInitialState: function() {
+    return {data: []};
+  },
+
+  componentDidMount: function() {
+    this.loadtoDosDescriptionFromServer();
+    setInterval(this.loadtoDosDescriptionFromServer, this.props.pollInterval);
+  },
+  render: function() {
+    return (
+      <div className="DetailedtodoBox">
+        <h1> todos detailed </h1>
+        <TodoList data={this.state.data}/>
+        
+      </div>
+
+    );
+  }
+  
+});
+var TodoList = React.createClass({
+  render: function() {
+     var todoNodes = this.props.data.map(function (todo) {
+      return (
+        <TodoDetailed TodoDetailed={TodoList.Details}>
+          {TodoList.Details}
+        </TodoDetailed>
+        
+      );
+    });
+   return (
+      <div className="TodoList">
+        {todoNodes}
+      </div>
+    );
+  }
+});
 // /javascripts/mainjson.json
 React.renderComponent(
   <TodoBox url = "todos.json" pollInterval={2000}/>,
   document.getElementById('content')
+);
+
+React.renderComponent(
+  <DetailedTodoBox url = "todos.json" pollInterval={2000}/>,
+  document.getElementById('contentdetailed')
+
 );
 

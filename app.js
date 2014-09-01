@@ -11,7 +11,13 @@ var users = require('./routes/users');
 var app = express();
 
 var todos = [
-  {"description": "rooms", "text": "This is one todo"},
+  {"description": "rooms", "text": "This is one todo",
+    "Details":[
+      "clean room",
+      "tidy room",
+      "sort room"
+    ]
+  }, 
   {"description": "bathroom", "text": "This is *another* todo"}
 ]
 app.get('/todos.json', function(req, res) {
