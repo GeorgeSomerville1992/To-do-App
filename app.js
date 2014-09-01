@@ -20,7 +20,7 @@ app.get('/todos.json', function(req, res) {
 });
 
 app.post('/todos.json', function(req, res) {
-  comments.push(req.body);
+  todos.push(req.body);
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(todos));
 });
