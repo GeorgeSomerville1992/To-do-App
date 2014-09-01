@@ -143,8 +143,9 @@ var TodoForm = React.createClass({
     );
   }
 });
+// /javascripts/mainjson.json
 React.renderComponent(
-  <TodoBox url = "/javascripts/mainjson.json" pollInterval={2000}/>,
+  <TodoBox url = "todos.json" pollInterval={2000}/>,
   document.getElementById('content')
 );
 

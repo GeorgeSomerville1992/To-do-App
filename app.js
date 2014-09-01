@@ -14,6 +14,16 @@ var todos = [
   {"description": "rooms", "text": "This is one todo"},
   {"description": "bathroom", "text": "This is *another* todo"}
 ]
+app.get('/todos.json', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(todos));
+});
+
+app.post('/todos.json', function(req, res) {
+  todos.push(req.body);
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(todos));
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
