@@ -14,6 +14,16 @@ var todos = [
   {"description": "rooms", "text": "This is one todo"},
   {"description": "bathroom", "text": "This is *another* todo"}
 ]
+app.get('/todos.json', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(todos));
+});
+
+app.post('/todos.json', function(req, res) {
+  comments.push(req.body);
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(todos));
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,27 +50,27 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
-}
+// if (app.get('env') === 'development') {
+//     app.use(function(err, req, res, next) {
+//         res.status(err.status || 500);
+//         res.render('error', {
+//             message: err.message,
+//             error: err
+//         });
+//     });
+// }
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
-});
+// // production error handler
+// // no stacktraces leaked to user
+// app.use(function(err, req, res, next) {
+//     res.status(err.status || 500);
+//     res.render('error', {
+//         message: err.message,
+//         error: {}
+//     });
+// });
 
-
+app.listen(3000);
 
 
 module.exports = app;
