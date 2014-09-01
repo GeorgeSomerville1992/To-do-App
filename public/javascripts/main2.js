@@ -107,6 +107,7 @@ var TodoList = React.createClass({
         <Todo description={todo.description}>
           {todo.text}
         </Todo>
+        
       );
     });
    return (
