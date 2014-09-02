@@ -12,7 +12,7 @@ React.renderComponent(
 // cant just take tethe raw data out, it needs to knwo 
 // var data = [
 //   {description: "Pete Hunt", text: "This is one comment"},
-//   {description: "Jordan Walke", text: "This is *another* comment"}
+//   {description: "Jordan Walke", txt: "This is *another* comment"}
 // ];
 // var todos = [
 //   {"description": "rooms", "text": "This is one todo"},
@@ -33,19 +33,7 @@ var Todo = React.createClass({
     );
   }
 });
-var TodoDetailed = React.createClass({
-  render: function() {
-     var rawMarkup = converter.makeHtml(this.props.children.toString());
-    return (
-      <div className="TodoDetailed">
-        <h2 className="todotDescriptionList">
-          {this.props.Details}
-        </h2>
-        <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
-      </div>
-    );
-  }
-});
+
 
 
 
@@ -160,58 +148,78 @@ var TodoForm = React.createClass({
     );
   }
 });
-
-
-var DetailedTodoBox = React.createClass({
-  loadtoDosDescriptionFromServer: function(){
-     $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  getInitialState: function() {
-    return {data: []};
-  },
-
-  componentDidMount: function() {
-    this.loadtoDosDescriptionFromServer();
-    setInterval(this.loadtoDosDescriptionFromServer, this.props.pollInterval);
-  },
+// put in a hash or something???? 
+var data = 
+[
+  {"description": "rooms", "text": "This is one todo",
+    "Details":[
+      "clean room",
+      "tidy room",
+      "sort room"
+    ]
+  }, 
+  {"description": "bathroom", "text": "This is *another* todo",
+    "Details":[
+    "clean floor",
+      "tidy floor",
+      "sort floor"
+    ]
+  }
+]
+var converterDetailed = new Showdown.converter();
+var TodoDetailed = React.createClass({
   render: function() {
+    var rawMarkupDetailed = converterDetailed.makeHtml(this.props.children.toString());
     return (
-      <div className="DetailedtodoBox">
-        <h1> todos detailed </h1>
-        <TodoList data={this.state.data}/>
+      <div className="todoDetailed">
         
+         <li dangerouslySetInnerHTML={{__html:  rawMarkupDetailed }} />
       </div>
-
     );
   }
-  
+});
+var TodoBoxDetailed = React.createClass({
+  render: function() {
+    return (
+      <div className="todoBoxDetailed">
+        <h1>todolist</h1>
+        <TodoList data={this.props.data}/>
+        <TodoDetailedForm />
+      </div>
+    );
+  }
+});
+var TodoDetailedForm = React.createClass({
+  render: function() {
+    return (
+      <div className="tododetailedForm">
+        Hello, world! I am a TodoDetailedForm.
+      </div>
+    );
+  }
 });
 var TodoList = React.createClass({
   render: function() {
-     var todoNodes = this.props.data.map(function (todo) {
+    var todoDetailedNodes = this.props.data.map(function (todoDetailed) {
       return (
-        <TodoDetailed TodoDetailed={TodoList.Details}>
-          {TodoList.Details}
+        <TodoDetailed >
+          {todoDetailed.Details[0]}
         </TodoDetailed>
-        
       );
     });
-   return (
-      <div className="TodoList">
-        {todoNodes}
+    return (
+      <div className="todoList">
+        {todoDetailedNodes}
       </div>
     );
+
   }
 });
+
+
+
+
+
 // /javascripts/mainjson.json
 React.renderComponent(
   <TodoBox url = "todos.json" pollInterval={2000}/>,
@@ -219,7 +227,7 @@ React.renderComponent(
 );
 
 React.renderComponent(
-  <DetailedTodoBox url = "todos.json" pollInterval={2000}/>,
+  <TodoBoxDetailed data={data} />,
   document.getElementById('contentdetailed')
 
 );
