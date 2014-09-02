@@ -21,14 +21,121 @@ React.renderComponent(
 
 var converter = new Showdown.converter();
 var Todo = React.createClass({
+  handleSubmitTodoDetails: function(e) {
+    e.preventDefault
+   
+    
+  // cant figure out how to get this translated accross so we can see users own 
+  // seperate lsit when clicked apon.
+    console.log("hi")
+     var converterDetailed = new Showdown.converter();
+    var TodoDetailed = React.createClass({
+      render: function() {
+        var rawMarkupDetailed = converterDetailed.makeHtml(this.props.children.toString());
+        return (
+          <div className="todoDetailed">
+            
+             <li ref="Details" dangerouslySetInnerHTML={{__html:  rawMarkupDetailed }} />
+          </div>
+        );
+      }
+    });
+    var TodoBoxDetailed = React.createClass({
+      
+      loadTodoDescriptionsFromServer: function() {
+        var todos = this.state.data;
+        console.log(todos)
+        this.setState({data: todos}, function(){
+          $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            success: function(data) {
+              this.setState({data: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+              console.error(this.props.url, status, err.toString());
+            }.bind(this)
+          });
+        });  
+      },
+
+      loadDetailedTodoDescriptions: function(){
+        // 
+        console.log("found")
+
+      },
+      getInitialState: function() {
+        return {data: []};
+      },
+      componentDidMount: function() {
+        this.loadTodoDescriptionsFromServer();
+        setInterval(this.loadTodoDescriptionsFromServer, this.props.pollInterval);
+      },
+      GetTodoDescriptionFromServer: function(){
+        console.log("hi")
+        var todoDetails = this.state.data;
+        console.log(todoDetails)
+        this.props.onTodoDetailedSubmit({Details: Details});
+      },
+      
+
+      render: function() {
+        return (
+          <div className="todoBoxDetailed">
+            <h1>todolist</h1>
+            <TodoList data={this.state.data}/>
+            
+            <TodoDetailedForm />
+          </div>
+        );
+      }
+    });
+    var TodoDetailedForm = React.createClass({
+      render: function() {
+        return (
+          <div className="tododetailedForm">
+            Hello, world! I am a TodoDetailedForm.
+          </div>
+        );
+      }
+    });
+    var TodoList = React.createClass({
+      render: function() {
+        var todoDetailedNodes = this.props.data.map(function (todoDetailed) {
+          return (
+            <TodoDetailed >
+              {todoDetailed.Details}
+            </TodoDetailed>
+          );
+        });
+        return (
+          <div className="todoList">
+            {todoDetailedNodes}
+          </div>
+        );
+
+      },
+    
+    });
+    React.renderComponent(
+      <TodoBoxDetailed url = "todos.json" pollInterval={2000}/>,
+      document.getElementById('contentdetailed')
+
+    );
+  },
+
   render: function() {
      var rawMarkup = converter.makeHtml(this.props.children.toString());
     return (
       <div className="todo">
-        <h2 className="todotDescription">
+        <h2 className ="todoDescription" >
           {this.props.description}
         </h2>
         <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+        <button onClick={this.handleSubmitTodoDetails}>gogoogo</button>
+        <input type="submit" value ="gogo" onSubmit={this.handleSubmitTodoDetails}/>
+        
+       
       </div>
     );
   }
@@ -37,13 +144,14 @@ var Todo = React.createClass({
 
 
 
-
 // sets inital state executes once ins lifecycle and stes initnal state
 // we need to update it dynamically via server ajax
 //
 var TodoBox = React.createClass({
-  
+
   loadTodosFromServer: function() {
+    var todos = this.state.data;
+    console.log(todos)
     $.ajax({
       url: this.props.url,
       dataType: 'json',
@@ -57,9 +165,9 @@ var TodoBox = React.createClass({
   },
   handleTodoSubmit: function(todo) {
     // TODO: submit to the server and refresh the list
-   
+    console.log(todo)
     var todos = this.state.data;
-   
+    console.log(todos)
     todos.push(todo)
     console.log(todos)
     // ajax cant find json url. when new object is added
@@ -86,7 +194,7 @@ var TodoBox = React.createClass({
     this.loadTodosFromServer();
     setInterval(this.loadTodosFromServer, this.props.pollInterval);
   },
-
+  
 
   render: function() {
     return (
@@ -94,6 +202,7 @@ var TodoBox = React.createClass({
         <h1> todos </h1>
         <TodoSummary data={this.state.data}/>
         <TodoForm onTodoSubmit={this.handleTodoSubmit} />
+
       </div>
 
     );
@@ -106,17 +215,20 @@ var TodoBox = React.createClass({
 // so we set it up => then redner insdie using the {todo}nodes
 var TodoSummary = React.createClass({
   render: function() {
-     var todoNodes = this.props.data.map(function (todo) {
+     var todoNodes = this.props.data.map(function (todo, index) {
+      console.log(todo)
       return (
-        <Todo description={todo.description}>
+        <Todo description={todo.description} key={index}>
           {todo.text}
+
         </Todo>
         
       );
     });
    return (
-      <div className="TodoSummary">
+      <div className="todoSummary">
         {todoNodes}
+
       </div>
     );
   }
@@ -128,11 +240,12 @@ var TodoForm = React.createClass({
     console.log("this is being ran")
     var description = this.refs.description.getDOMNode().value.trim();
     var text = this.refs.text.getDOMNode().value.trim();
-    this.props.onTodoSubmit({description: description, text: text});
+    console.log(description)
     // if not text or descriptions (if one dont exist?)
     if (!text || !description) {
       return false;
     }
+    this.props.onTodoSubmit({description: description, text: text});
     // TODO: send request to the server
     this.refs.description.getDOMNode().value = '';
     this.refs.text.getDOMNode().value = '';
@@ -166,77 +279,10 @@ var TodoForm = React.createClass({
 //     ]
 //   }
 // ]
-var converterDetailed = new Showdown.converter();
-var TodoDetailed = React.createClass({
-  render: function() {
-    var rawMarkupDetailed = converterDetailed.makeHtml(this.props.children.toString());
-    return (
-      <div className="todoDetailed">
-        
-         <li dangerouslySetInnerHTML={{__html:  rawMarkupDetailed }} />
-      </div>
-    );
-  }
-});
-var TodoBoxDetailed = React.createClass({
+
+ 
+
   
-  loadTodoDescriptionsFromServer: function() {
-    $.ajax({
-      url: this.props.url,
-      dataType: 'json',
-      success: function(data) {
-        this.setState({data: data});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(this.props.url, status, err.toString());
-      }.bind(this)
-    });
-  },
-  getInitialState: function() {
-    return {data: []};
-  },
-  componentDidMount: function() {
-    this.loadTodoDescriptionsFromServer();
-    setInterval(this.loadTodoDescriptionsFromServer, this.props.pollInterval);
-  },
-  render: function() {
-    return (
-      <div className="todoBoxDetailed">
-        <h1>todolist</h1>
-        <TodoList data={this.state.data}/>
-        <TodoDetailedForm />
-      </div>
-    );
-  }
-});
-var TodoDetailedForm = React.createClass({
-  render: function() {
-    return (
-      <div className="tododetailedForm">
-        Hello, world! I am a TodoDetailedForm.
-      </div>
-    );
-  }
-});
-var TodoList = React.createClass({
-  render: function() {
-    var todoDetailedNodes = this.props.data.map(function (todoDetailed) {
-      return (
-        <TodoDetailed >
-          {todoDetailed.Details[0]}
-        </TodoDetailed>
-      );
-    });
-    return (
-      <div className="todoList">
-        {todoDetailedNodes}
-      </div>
-    );
-
-  }
-});
-
-
 
 
 
@@ -246,9 +292,5 @@ React.renderComponent(
   document.getElementById('content')
 );
 
-React.renderComponent(
-  <TodoBoxDetailed url = "todos.json" pollInterval={2000}/>,
-  document.getElementById('contentdetailed')
 
-);
 
