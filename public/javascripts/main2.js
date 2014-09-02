@@ -149,23 +149,23 @@ var TodoForm = React.createClass({
   }
 });
 // put in a hash or something???? 
-var data = 
-[
-  {"description": "rooms", "text": "This is one todo",
-    "Details":[
-      "clean room",
-      "tidy room",
-      "sort room"
-    ]
-  }, 
-  {"description": "bathroom", "text": "This is *another* todo",
-    "Details":[
-    "clean floor",
-      "tidy floor",
-      "sort floor"
-    ]
-  }
-]
+// var data = 
+// [
+//   {"description": "rooms", "text": "This is one todo",
+//     "Details":[
+//       "clean room",
+//       "tidy room",
+//       "sort room"
+//     ]
+//   }, 
+//   {"description": "bathroom", "text": "This is *another* todo",
+//     "Details":[
+//     "clean floor",
+//       "tidy floor",
+//       "sort floor"
+//     ]
+//   }
+// ]
 var converterDetailed = new Showdown.converter();
 var TodoDetailed = React.createClass({
   render: function() {
@@ -179,11 +179,31 @@ var TodoDetailed = React.createClass({
   }
 });
 var TodoBoxDetailed = React.createClass({
+  
+  loadTodoDescriptionsFromServer: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.loadTodoDescriptionsFromServer();
+    setInterval(this.loadTodoDescriptionsFromServer, this.props.pollInterval);
+  },
   render: function() {
     return (
       <div className="todoBoxDetailed">
         <h1>todolist</h1>
-        <TodoList data={this.props.data}/>
+        <TodoList data={this.state.data}/>
         <TodoDetailedForm />
       </div>
     );
@@ -227,7 +247,7 @@ React.renderComponent(
 );
 
 React.renderComponent(
-  <TodoBoxDetailed data={data} />,
+  <TodoBoxDetailed url = "todos.json" pollInterval={2000}/>,
   document.getElementById('contentdetailed')
 
 );

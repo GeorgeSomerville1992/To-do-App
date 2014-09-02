@@ -18,7 +18,13 @@ var todos = [
       "sort room"
     ]
   }, 
-  {"description": "bathroom", "text": "This is *another* todo"}
+  {"description": "bathroom", "text": "This is *another* todo",
+    "Details":[
+    "clean floor",
+      "tidy floor",
+      "sort floor"
+    ]
+  }
 ]
 app.get('/todos.json', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
