@@ -125,7 +125,7 @@ var Todo = React.createClass({
   },
 
   render: function() {
-     var rawMarkup = converter.makeHtml(this.props.children.toString());
+    var rawMarkup = converter.makeHtml(this.props.children.toString());
     return (
       <div className="todo">
         <h2 className ="todoDescription" >
