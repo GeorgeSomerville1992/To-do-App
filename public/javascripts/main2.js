@@ -110,7 +110,7 @@ var Todo = React.createClass({
           {this.props.description}
         </h2>
         <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
-        <button onClick={this.handleSubmitTodoDetails}>View Things Todo</button>
+        <button onClick={this.handleSubmitTodoDetails}>View Todos</button>
       </div>
     );
   }
