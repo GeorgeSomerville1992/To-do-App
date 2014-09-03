@@ -11,7 +11,12 @@
 //   {description: "Pete Hunt", text: "This is one comment"},
 //   {description: "Jordan Walke", txt: "This is *another* comment"}
 // ];
-
+// file structure
+//  - main box where ajax requets are ran 
+//   -  component  container    
+//         strcutre of componentistelf
+//   -  component containe
+// 1) create basic components 
 
 var converter = new Showdown.converter();
 var Todo = React.createClass({
@@ -140,13 +145,13 @@ var TodoBox = React.createClass({
     });
   },
   handleTodoSubmit: function(todo) {
-    // TODO: submit to the server and refresh the list
+    
     console.log(todo)
     var todos = this.state.data;
     console.log(todos)
     todos.push(todo)
     console.log(todos)
-    // ajax cant find json url. when new object is added
+    
     this.setState({data: todos}, function(){
       $.ajax({
         url: this.props.url,
@@ -189,6 +194,7 @@ var TodoBox = React.createClass({
 //here were callsing the todo class and shoving whatever we get 
 // from the data inide the decription and the text
 // so we set it up => then redner insdie using the {todo}nodes
+
 var TodoSummary = React.createClass({
   render: function() {
      var todoNodes = this.props.data.map(function (todo, index) {
