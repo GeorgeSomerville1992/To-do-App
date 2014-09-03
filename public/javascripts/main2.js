@@ -95,8 +95,9 @@ var Todo = React.createClass({
               <button>{'Add #' + (this.state.items.length + 1)}</button>
 
             </form>
-            // use this form to add in simlar to the last form we did!!!! 
+            
           </div>
+          // use this form to add in simlar to the last form we did!!!! 
         );
       }
     });
