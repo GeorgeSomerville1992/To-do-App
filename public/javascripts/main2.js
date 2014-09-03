@@ -1,8 +1,5 @@
 /** @jsx React.DOM */
-React.renderComponent(
-  <h1>Hello, world first render!</h1>,
-  document.getElementById('example')
-);
+
 // we render the CLASS NAMES  in some sort of xml thing
 // create Todo list and todo form.
 // logical order to to how the code reades it, wee need to create todo before todo lsit becasue
@@ -14,116 +11,97 @@ React.renderComponent(
 //   {description: "Pete Hunt", text: "This is one comment"},
 //   {description: "Jordan Walke", txt: "This is *another* comment"}
 // ];
-// var todos = [
-//   {"description": "rooms", "text": "This is one todo"},
-//   {"description": "bathroom", "text": "This is *another* todo"}
-// ];
+
 
 var converter = new Showdown.converter();
 var Todo = React.createClass({
   handleSubmitTodoDetails: function(e) {
-    e.preventDefault
-   
-    
-  // cant figure out how to get this translated accross so we can see users own 
-  // seperate lsit when clicked apon.
-    console.log("hi")
-     var converterDetailed = new Showdown.converter();
-    var TodoDetailed = React.createClass({
-      render: function() {
-        var rawMarkupDetailed = converterDetailed.makeHtml(this.props.children.toString());
-        return (
-          <div className="todoDetailed">
-             <li> <p dangerouslySetInnerHTML = {{__html: rawMarkupDetailed }} /></li>
-             
-          </div>
-        );
-      }
-    });
-    var TodoBoxDetailed = React.createClass({
-      
-      loadTodoDescriptionsFromServer: function() {
-        var todos = this.state.data;
-        console.log(todos)
-        this.setState({data: todos}, function(){
-          $.ajax({
-            url: this.props.url,
-            dataType: 'json',
-            success: function(data) {
-              this.setState({data: data});
-            }.bind(this),
-            error: function(xhr, status, err) {
-              console.error(this.props.url, status, err.toString());
-            }.bind(this)
-          });
-        });  
-      },
-
-      loadDetailedTodoDescriptions: function(){
-        // 
-        console.log("found")
-
-      },
-      getInitialState: function() {
-        return {data: []};
-      },
-      componentDidMount: function() {
-        this.loadTodoDescriptionsFromServer();
-        setInterval(this.loadTodoDescriptionsFromServer, this.props.pollInterval);
-      },
-      GetTodoDescriptionFromServer: function(){
-        console.log("hi")
-        var todoDetails = this.state.data;
-        console.log(todoDetails)
-        this.props.onTodoDetailedSubmit({Details: Details});
-      },
-      
-
-      render: function() {
-        return (
-          <div className="todoBoxDetailed">
-            <h1>todolist</h1>
-            <TodoList data={this.state.data}/>
-            
-            <TodoDetailedForm />
-          </div>
-        );
-      }
-    });
-    var TodoDetailedForm = React.createClass({
-      render: function() {
-        return (
-          <div className="tododetailedForm">
-            Hello, world! I am a TodoDetailedForm.
-          </div>
-        );
-      }
-    });
     var TodoList = React.createClass({
       render: function() {
-        var todoDetailedNodes = this.props.data.map(function (todoDetailed) {
+        var createItem = function(items) {
+          return <li>{items}<input type="checkbox" name ="choose" value="Choose"> Done? </input> </li>
+                
+        };
+        return <ul>{this.props.items.map(createItem)}</ul>;
+      }
+    });
+
+    var TodoApp = React.createClass({
+      loadTodosFromServer: function(items) {
+        var todos = this.state.data;
+        console.log("load todos from server")
+        console.log(todos)
+        
+        $.ajax({
+          url: this.props.url,
+          dataType: 'json',
+          success: function(items) {
+            this.setState({items: items});
+          }.bind(this),
+          error: function(xhr, status, err) {
+            console.error(this.props.url, status, err.toString());
+
+        }
+      })
+    },
+      getInitialState: function() {
+        return {items: []};
+      },
+      componentDidMount: function() {
+        this.loadTodosFromServer();
+        setInterval(this.loadTodosFromServer, this.props.pollInterval);
+      },
+      onChange: function(e) {
+        this.setState({text: e.target.value});
+      },
+      handleSubmit: function(e, items) {
+       e.preventDefault();
+       console.log(items)
+        // var description = this.refs.description.getDOMNode().value.trim();
+        var Details = this.refs.Details.getDOMNode().value.trim();
+        // items.push(Details)
+        // console.log(items)
+        
+        // i need to push these details into the summered json array, however i cannt call it becaiseits called much further down.
+
+        //this.props.onTodoSubmit({Details: Details})
+        //console.log(Details)
+        var nextItems = this.state.items.concat([this.state.text]);
+        var nextText = '';
+        this.setState({items: nextItems, text: nextText});
+      },
+     render: function() {
+        var todoNodes = this.props.data.map(function (items) {
           return (
-            <TodoDetailed >
-              {todoDetailed.Details}
-            </TodoDetailed>
+            <Todo>
+              {items.Details}
+            </Todo>
           );
         });
         return (
-          <div className="todoList">
-            {todoDetailedNodes}
+          <div className="commentList">
+            {todoNodes}
           </div>
         );
-
       },
-    
+      render: function() {
+        return (
+          <div>
+            <h3>Todos</h3>
+            <TodoList items={this.state.items} />
+
+            <form onSubmit={this.handleSubmit}>
+              <input onChange={this.onChange} value={this.state.text} ref="Details" required={true} />
+              <button>{'Add #' + (this.state.items.length + 1)}</button>
+
+            </form>
+            // use this form to add in simlar to the last form we did!!!! 
+          </div>
+        );
+      }
     });
-    React.renderComponent(
-      <TodoBoxDetailed url = "todos.json" pollInterval={2000}/>,
-      document.getElementById('contentdetailed')
-
-    );
-  },
-
+    React.renderComponent(<TodoApp url="todos.json" pollInterval={2000}/>,  document.getElementById('contentdetailed'));
+  },  
   render: function() {
     var rawMarkup = converter.makeHtml(this.props.children.toString());
     return (
@@ -132,10 +110,7 @@ var Todo = React.createClass({
           {this.props.description}
         </h2>
         <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
-        <button onClick={this.handleSubmitTodoDetails}>gogoogo</button>
-        <input type="submit" value ="gogo" onSubmit={this.handleSubmitTodoDetails}/>
-        
-       
+        <button onClick={this.handleSubmitTodoDetails}>View Things Todo</button>
       </div>
     );
   }
@@ -199,7 +174,7 @@ var TodoBox = React.createClass({
   render: function() {
     return (
       <div className="todoBox">
-        <h1> todos </h1>
+        <h3> Todo Name </h3>
         <TodoSummary data={this.state.data}/>
         <TodoForm onTodoSubmit={this.handleTodoSubmit} />
 

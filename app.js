@@ -11,14 +11,14 @@ var users = require('./routes/users');
 var app = express();
 
 var todos = [
-  {"description": "rooms", "text": "This is one todo",
+  {"description": "rooms", "text": "Basic Description of First todo",
     "Details":[
       "clean room",
       "tidy room",
       "sort room"
     ]
   }, 
-  {"description": "bathroom", "text": "This is *another* todo",
+  {"description": "bathroom", "text": "Basic Description of Second todo",
     "Details":[
     "clean floor",
       "tidy floor",
