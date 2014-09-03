@@ -34,8 +34,8 @@ var Todo = React.createClass({
         var rawMarkupDetailed = converterDetailed.makeHtml(this.props.children.toString());
         return (
           <div className="todoDetailed">
-            
-             <li ref="Details" dangerouslySetInnerHTML={{__html:  rawMarkupDetailed }} />
+             <li> <p dangerouslySetInnerHTML = {{__html: rawMarkupDetailed }} /></li>
+             
           </div>
         );
       }
