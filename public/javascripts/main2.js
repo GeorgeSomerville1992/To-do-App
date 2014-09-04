@@ -7,6 +7,9 @@
 // adding markdown => apprently its good form formatting text inline.
 // theres a few complex thigns fgoing on fro actually rendering the comments. 
 // cant just take tethe raw data out, it needs to knwo 
+
+
+// // state vs probs 
 // var data = [
 //   {description: "Pete Hunt", text: "This is one comment"},
 //   {description: "Jordan Walke", txt: "This is *another* comment"}
@@ -18,6 +21,9 @@
 //   -  component containe
 // 1) create basic components 
 
+
+// with the todo lists itself, i need the components to be rendered at a click of button
+// to be able to do this entire strucutre must be in ones component
 var converter = new Showdown.converter();
 var Todo = React.createClass({
   handleSubmitTodoDetails: function(e) {
@@ -77,8 +83,9 @@ var Todo = React.createClass({
       },
      render: function() {
         var todoNodes = this.props.data.map(function (items) {
+
           return (
-            <Todo>
+            <Todo> // 
               {items.Details}
             </Todo>
           );
@@ -109,6 +116,7 @@ var Todo = React.createClass({
     React.renderComponent(<TodoApp url="todos.json" pollInterval={2000}/>,  document.getElementById('contentdetailed'));
   },  
   render: function() {
+    // using showdown lib, no sure why were using this, check bk through note => research.
     var rawMarkup = converter.makeHtml(this.props.children.toString());
     return (
       <div className="todo">
@@ -127,7 +135,8 @@ var Todo = React.createClass({
 
 // sets inital state executes once ins lifecycle and stes initnal state
 // we need to update it dynamically via server ajax
-//
+// by using this and probs we can change the data to whatever we want, 
+// nothing is specfic
 var TodoBox = React.createClass({
 
   loadTodosFromServer: function() {
@@ -151,7 +160,10 @@ var TodoBox = React.createClass({
     console.log(todos)
     todos.push(todo)
     console.log(todos)
-    
+    // we are posting the current data from form 
+    // from the this handle functon, we get the text typed in (this.ref) and store inside variable
+    // then decalare state and push new item into state which is json hash. 
+    // state vs probs
     this.setState({data: todos}, function(){
       $.ajax({
         url: this.props.url,
@@ -199,6 +211,8 @@ var TodoSummary = React.createClass({
   render: function() {
      var todoNodes = this.props.data.map(function (todo, index) {
       console.log(todo)
+      // below is the CLASS we are rendering inside a html tag, like XML, this is how we call things
+      // seems dirty to be injecting html like html like this, is more streamlined/faster?
       return (
         <Todo description={todo.description} key={index}>
           {todo.text}
